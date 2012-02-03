@@ -59,11 +59,8 @@ static void readGrammar(ifstream& infile, map<string, Definition>& grammar) {
 int main(int argc, char *argv[]) {
 	std::string filepath = "./data/bionic.g";
 	if (argc == 1) {
-//    cerr << "You need to specify the name of a grammar file." << endl;
-//    cerr << "Usage: rsg <path to grammar text file>" << endl;
-//		return 1;// non-zero return value means something bad happened
 	} else {
-//		filepath = std::string( argv[1] );
+		filepath = std::string( argv[1] );
 	}
 
 	ifstream grammarFile( filepath.c_str() );
@@ -80,6 +77,8 @@ int main(int argc, char *argv[]) {
 			<< grammar.size() << " definitions." << endl;
 
 
+	// Create a sentence generator, and output the final sentence
 	SentenceGenerator generator( grammar );
+	cout << generator.getFinalSentence() << endl;
 	return 0;
 }

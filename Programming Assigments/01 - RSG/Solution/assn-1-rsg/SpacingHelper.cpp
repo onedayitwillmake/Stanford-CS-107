@@ -11,6 +11,7 @@
 SpacingHelper::SpacingHelper() {
 	_rules["."] = "\n";
 	_rules[","] = "";
+	_rules[""] = "";
 }
 SpacingHelper::~SpacingHelper() {
 }

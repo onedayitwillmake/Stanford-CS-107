@@ -22,11 +22,16 @@ public:
 	SentenceGenerator( StringDefinitionMap& grammer );
 	virtual ~SentenceGenerator();
 
+	//  const string& getNonterminal() const { return nonterminal; }
+
+	const string getFinalSentence() const { return _sentence.str(); };
 private:
 	map<string, Definition> _grammer;
-	std::vector<std::string> _nonTerminals;
-	std::stringstream _sentence;
 	SpacingHelper _spacingHelper;
+
+	std::stringstream _sentence;
+	std::string _lastString;
+
 	void expandSentence( const Production& prod ); // CDT debugger can't hit breakpoints in constructors
 };
 

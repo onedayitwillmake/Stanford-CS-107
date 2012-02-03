@@ -12,13 +12,11 @@ SentenceGenerator::SentenceGenerator( StringDefinitionMap& grammer ) {
 	_grammer = grammer;
 	StringDefinitionMap::const_iterator found = _grammer.find("<start>");
 	if( found != _grammer.end() ) {
-		std::cout << found->second.getNonterminal() << "\n----" << std::endl;
+		_lastString = "";
 		expandSentence( found->second.getRandomProduction() );
 	} else {
 		std::cout << "Start not found!" << std::endl;
 	}
-
-	std::cout << _sentence.str() << std::endl;
 }
 
 
@@ -30,7 +28,9 @@ void SentenceGenerator::expandSentence( const Production& prod ) {
 		// Non terminal - just append it to the string
 		if( isNonTerminal == _grammer.end() ) {
 			std::string spacing;
-			_spacingHelper.getSpaceRuleFor( *curr, spacing );
+			_spacingHelper.getSpaceRuleFor( _lastString, spacing );
+
+			_lastString = (*curr);
 			_sentence << spacing << (*curr);
 		} else {
 			expandSentence( isNonTerminal->second.getRandomProduction() ) ;
