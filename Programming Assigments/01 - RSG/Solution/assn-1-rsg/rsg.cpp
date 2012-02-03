@@ -57,7 +57,7 @@ static void readGrammar(ifstream& infile, map<string, Definition>& grammar) {
  */
 
 int main(int argc, char *argv[]) {
-	std::string filepath = "./data/excuse.g";
+	std::string filepath = "./data/bionic.g";
 	if (argc == 1) {
 //    cerr << "You need to specify the name of a grammar file." << endl;
 //    cerr << "Usage: rsg <path to grammar text file>" << endl;
