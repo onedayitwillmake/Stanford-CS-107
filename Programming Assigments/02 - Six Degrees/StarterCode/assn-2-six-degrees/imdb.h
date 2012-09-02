@@ -97,6 +97,7 @@ class imdb {
     const void *fileMap;
   } actorInfo, movieInfo;
   
+
   static const void *acquireFileMap(const string& fileName, struct fileInfo& info);
   static void releaseFileMap(struct fileInfo& info);
 

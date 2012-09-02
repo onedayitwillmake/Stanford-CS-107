@@ -2,9 +2,12 @@
 ## Makefile for CS107 Assignment 2: Six Degrees
 ##
 
+ARCH=i386
 CPPFLAGS = -g -Wall
 CXX = g++
+
 LDFLAGS =
+
 
 IMDB_CLASS = imdb.cc
 IMDB_CLASS_H = $(IMDB_CLASS:.cc=.h)

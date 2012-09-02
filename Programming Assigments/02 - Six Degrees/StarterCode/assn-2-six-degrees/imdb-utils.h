@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "stdlib.h"
+#include "strings.h"
 using namespace std;
 
 /**
@@ -43,7 +45,7 @@ struct film {
   
   bool operator<(const film& rhs) const { 
     return this->title < rhs.title || 
-           this->title == rhs.title && this->year < rhs.year; 
+           (this->title == rhs.title && this->year < rhs.year);
   }
 };
 

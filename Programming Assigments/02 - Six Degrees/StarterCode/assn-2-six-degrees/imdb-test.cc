@@ -15,9 +15,9 @@ using namespace std;
 
 static void stall()
 {
-  string dummy;
-  cout << "[Press enter to continue]";
-  getline(cin, dummy);
+	string dummy;
+	cout << "[Press enter to continue]";
+	getline(cin, dummy);
 }
 
 /**
@@ -28,9 +28,9 @@ static void stall()
 
 static void printFill()
 {
-  for (int i = 0; i < 5; i++) cout << endl;
-  cout << "    " << ".... skipping one or more records... " << endl;
-  cout << endl;
+	for (int i = 0; i < 5; i++) cout << endl;
+	cout << "    " << ".... skipping one or more records... " << endl;
+	cout << endl;
 }
 
 /**
@@ -49,25 +49,25 @@ static void printFill()
 
 static void listMovies(const string& player, const vector<film>& credits)
 {
-  const unsigned int kNumFilmsToPrint = 10;
-  cout << player << " has starred in " << (int) (credits.size()) << " films." << endl;
-  cout << "These films are:" << endl;
-  unsigned int numMovies = 0;
-  vector<film>::const_iterator curr;
-  for (curr = credits.begin(); curr != credits.end() && numMovies < kNumFilmsToPrint; ++curr) {
-    const film& movie = *curr;
-    cout << setw(5) << ++numMovies << ".) " << movie.title << " (" << movie.year << ")" << endl;
-  }
-  if (curr != credits.end()) {
-    if (credits.size() > 2 * kNumFilmsToPrint) printFill();
-    while (numMovies < (credits.size() - kNumFilmsToPrint)) { numMovies++; ++curr; }
-    for (;curr != credits.end(); ++curr) {
-      const film& movie = *curr;
-      cout << setw(5) << ++numMovies << ".) " << movie.title << " (" << movie.year << ")" << endl;      
-    }
-  }
-  
-  stall();
+	const unsigned int kNumFilmsToPrint = 10;
+	cout << player << " has starred in " << (int) (credits.size()) << " films." << endl;
+	cout << "These films are:" << endl;
+	unsigned int numMovies = 0;
+	vector<film>::const_iterator curr;
+	for (curr = credits.begin(); curr != credits.end() && numMovies < kNumFilmsToPrint; ++curr) {
+		const film& movie = *curr;
+		cout << setw(5) << ++numMovies << ".) " << movie.title << " (" << movie.year << ")" << endl;
+	}
+	if (curr != credits.end()) {
+		if (credits.size() > 2 * kNumFilmsToPrint) printFill();
+		while (numMovies < (credits.size() - kNumFilmsToPrint)) { numMovies++; ++curr; }
+		for (;curr != credits.end(); ++curr) {
+			const film& movie = *curr;
+			cout << setw(5) << ++numMovies << ".) " << movie.title << " (" << movie.year << ")" << endl;
+		}
+	}
+
+	stall();
 }
 
 /**
@@ -89,42 +89,42 @@ static void listMovies(const string& player, const vector<film>& credits)
 
 static void listCostars(const string &player, const vector<film>& credits, const imdb& db)
 {
-  const unsigned int kNumCostarsToPrint = 10;
-  map<string, set<film> > costars;
-  for (int i = 0; i < (int) credits.size(); i++) {
-    const film& movie = credits[i];
-    vector<string> cast;
-    db.getCast(movie, cast);
-    for (int j = 0; j < (int) cast.size(); j++) {
-      const string& costar = cast[j];
-      if (costar != player) costars[costar].insert(movie);
-    }
-  }
-  
-  cout << player << " has worked with " << (int) costars.size() << " other people." << endl;
-  cout << "Those other people are:" << endl;
-  
-  unsigned int numCostars = 0;
-  map<string, set<film> >::const_iterator curr;
-  for (curr = costars.begin(); curr != costars.end() && numCostars < kNumCostarsToPrint; ++curr) {
-    const string& costar = curr->first;
-    cout << setw(5) << ++numCostars << ".) " << costar;
-    if (curr->second.size() > 1) cout << " (in " << (int) curr->second.size() << " different films)";
-    cout << endl;
-  }
+	const unsigned int kNumCostarsToPrint = 10;
+	map<string, set<film> > costars;
+	for (int i = 0; i < (int) credits.size(); i++) {
+		const film& movie = credits[i];
+		vector<string> cast;
+		db.getCast(movie, cast);
+		for (int j = 0; j < (int) cast.size(); j++) {
+			const string& costar = cast[j];
+			if (costar != player) costars[costar].insert(movie);
+		}
+	}
 
-  if (curr != costars.end()) {
-    if (costars.size() > 2 * kNumCostarsToPrint) printFill();
-    while (numCostars < costars.size() - kNumCostarsToPrint) { numCostars++; ++curr; }
-    for (; curr != costars.end(); ++curr) {
-      const string& costar = curr->first;
-      cout << setw(5) << ++numCostars << ".) " << costar;
-      if (curr->second.size() > 1) cout << " (in " << (int) curr->second.size() << " different films)";
-      cout << endl;
-    }
-  }
+	cout << player << " has worked with " << (int) costars.size() << " other people." << endl;
+	cout << "Those other people are:" << endl;
 
-  stall();
+	unsigned int numCostars = 0;
+	map<string, set<film> >::const_iterator curr;
+	for (curr = costars.begin(); curr != costars.end() && numCostars < kNumCostarsToPrint; ++curr) {
+		const string& costar = curr->first;
+		cout << setw(5) << ++numCostars << ".) " << costar;
+		if (curr->second.size() > 1) cout << " (in " << (int) curr->second.size() << " different films)";
+		cout << endl;
+	}
+
+	if (curr != costars.end()) {
+		if (costars.size() > 2 * kNumCostarsToPrint) printFill();
+		while (numCostars < costars.size() - kNumCostarsToPrint) { numCostars++; ++curr; }
+		for (; curr != costars.end(); ++curr) {
+			const string& costar = curr->first;
+			cout << setw(5) << ++numCostars << ".) " << costar;
+			if (curr->second.size() > 1) cout << " (in " << (int) curr->second.size() << " different films)";
+			cout << endl;
+		}
+	}
+
+	stall();
 }
 
 
@@ -149,18 +149,18 @@ static void listCostars(const string &player, const vector<film>& credits, const
  */
 
 static void listAllMoviesAndCostars(const string& player,
-				    const imdb& db)
+		const imdb& db)
 {
-  vector<film> credits;
-  if (!db.getCredits(player, credits) || credits.size() == 0) {
-    cout << "We're sorry, but " << player 
-	 << " doesn't appear to be in our database." << endl;
-    cout << "Perhaps someone else?" << endl;
-    return;
-  }
-  
-  listMovies(player, credits);
-  listCostars(player, credits, db);
+	vector<film> credits;
+	if (!db.getCredits(player, credits) || credits.size() == 0) {
+		cout << "We're sorry, but " << player
+				<< " doesn't appear to be in our database." << endl;
+		cout << "Perhaps someone else?" << endl;
+		return;
+	}
+
+	listMovies(player, credits);
+	listCostars(player, credits, db);
 }
 
 /**
@@ -181,13 +181,19 @@ static void listAllMoviesAndCostars(const string& player,
 
 static void queryForActors(const imdb& db)
 {
-  while (true) {
-    cout << "Please enter the name of an actor or actress (or [enter] to quit): ";
-    string response;
-    getline(cin, response);
-    if (cin.fail() || response == "") return;
-    listAllMoviesAndCostars(response, db);
-  }
+	string response = "Cher (I)";
+	listAllMoviesAndCostars(response, db);
+	return;
+	while (true) {
+		cout << "Please enter the name of an actor or actress (or [enter] to quit): ";
+//		string response = "Jerry Seinfeld";
+
+//		string response;
+//		getline(cin, response);
+//		if (cin.fail() || response == "") return;
+//		string response = "Jerry Seinfeld";
+//		listAllMoviesAndCostars(response, db);
+	}
 }
 
 /**
@@ -197,11 +203,11 @@ static void queryForActors(const imdb& db)
  * program that exercises the imdb class.  Notice
  * that the imdb constructor is called, 
  */
-
+//
 int main(int argc, char **argv)
 {
-  imdb db(determinePathToData());
-  if (!db.good()) { cerr << "Data directory not found!  Aborting..." << endl; return 1; }
-  queryForActors(db);
-  return 0;
+	imdb db(determinePathToData("./"));
+	if (!db.good()) { cerr << "Data directory not found!  Aborting..." << endl; return 1; }
+	queryForActors(db);
+	return 0;
 }

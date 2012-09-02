@@ -24,9 +24,68 @@ bool imdb::good() const
 	    (movieInfo.fd == -1) ); 
 }
 
+
 // you should be implementing these two methods right here... 
-bool imdb::getCredits(const string& player, vector<film>& films) const { return false; }
-bool imdb::getCast(const film& movie, vector<string>& players) const { return false; }
+bool imdb::getCredits(const string& player, vector<film>& films) const {
+
+	// Copy into numRecords, sizeof(int) bytes, starting at memory address actorFile
+	int numRecords;
+	memcpy(&numRecords, actorFile, sizeof(int) );
+
+	for(int i = 0; i < numRecords; ++i ) {
+		int recordOffset;
+		memcpy(&recordOffset, ((char*)actorFile+sizeof(int)) + (i*sizeof(int)), sizeof(int) );
+
+		void* actorRecord = (char*)actorFile+recordOffset;
+		char* actorName = (char*)actorRecord;
+
+		// Figure out where the num of movies info is stored by looking for it after the actors name
+		int buffer = strlen( actorName )+1;
+		// If the actors name is not an even number of characters, padd 1 extra byte
+		buffer += buffer % 2;
+
+		if( strcmp(actorName, player.c_str() ) == 0 ) {
+			short numMovies;
+			memcpy(&numMovies, (char*)actorRecord+buffer, sizeof(short) );
+
+			int movieBuffer = (buffer + sizeof(short));
+			movieBuffer += movieBuffer % 4;
+
+			int j = 0;
+			for(j = 0; j < numMovies; ++j ) {
+				int movieRecordOffset;
+				memcpy(&movieRecordOffset, (char*)actorRecord+movieBuffer + sizeof(int)*j, sizeof(int) );
+
+				char* movieName = (char*)movieFile+movieRecordOffset;
+				int movieYear = 1900 + *((char*)movieFile+movieRecordOffset + strlen(movieName) + 1);
+
+				// Pad 1 more byte for the char, if it's not even add another extra byte
+				int actorPadding = movieRecordOffset + ( strlen(movieName) + 1) + sizeof(char);
+				actorPadding += actorPadding%2;
+
+				short numActors = 0;
+				memcpy(&numActors, (char*)movieFile+actorPadding, sizeof(short) );
+
+				int dataPadding = actorPadding + sizeof(short);
+				dataPadding += dataPadding % 4;
+
+				film aFilm;
+				aFilm.title = std::string(movieName);
+				aFilm.year = movieYear;
+
+				films.push_back(aFilm);
+
+				printf("%s | %i | %hi \n", movieName, movieYear, numActors);
+			}
+		}
+
+	}
+
+	return false;
+}
+bool imdb::getCast(const film& movie, vector<string>& players) const { 
+	return false; 
+}
 
 imdb::~imdb()
 {
