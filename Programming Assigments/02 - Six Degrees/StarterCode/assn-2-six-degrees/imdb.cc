@@ -39,6 +39,7 @@ bool imdb::getCredits(const string& player, vector<film>& films) const {
 		void* actorRecord = (char*)actorFile+recordOffset;
 		char* actorName = (char*)actorRecord;
 
+
 		// Figure out where the num of movies info is stored by looking for it after the actors name
 		int buffer = strlen( actorName )+1;
 		// If the actors name is not an even number of characters, padd 1 extra byte
@@ -72,11 +73,14 @@ bool imdb::getCredits(const string& player, vector<film>& films) const {
 				film aFilm;
 				aFilm.title = std::string(movieName);
 				aFilm.year = movieYear;
+				aFilm.offset = movieRecordOffset;
+				aFilm.actorOffset = dataPadding;
+				aFilm.numActors = numActors;
 
 				films.push_back(aFilm);
-
-				printf("%s | %i | %hi \n", movieName, movieYear, numActors);
 			}
+
+			return true;
 		}
 
 	}
@@ -84,6 +88,16 @@ bool imdb::getCredits(const string& player, vector<film>& films) const {
 	return false;
 }
 bool imdb::getCast(const film& movie, vector<string>& players) const { 
+
+	for(int i = 0; i < movie.numActors; ++i ) {
+		int actorAddress;
+		memcpy( &actorAddress, (char*)movieFile+movie.actorOffset + (sizeof(int)*i), sizeof(int) );
+
+		void* actorRecord = (char*)actorFile+actorAddress;
+		char* actorName = (char*)actorRecord;
+		players.push_back( std::string( actorName  ) );
+	}
+
 	return false; 
 }
 

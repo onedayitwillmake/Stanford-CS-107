@@ -23,6 +23,9 @@ struct film {
   
   string title;
   int year;
+  int offset;
+  int actorOffset; // Where the beginning of the actor information lies
+  short numActors;
   
   /** 
    * Methods: operator==
