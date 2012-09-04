@@ -38,7 +38,7 @@ int compareActors( const void* a, const void* b ) {
 
 	void* actorRecord = (char*)needle->data+recordOffset;
 	char* actorName = (char*)actorRecord;
-//	std::cout << actorName << std::endl;
+//	std::cerr << actorName << std::endl;
 
 	int value = strcmp( needle->keyString, actorName );
 	return value;
@@ -70,7 +70,7 @@ bool imdb::getCredits(const string& player, vector<film>& films) const {
 	// If the actors name is not an even number of characters, padd 1 extra byte
 	buffer += buffer % 2;
 
-//	std::cout << "ActorName =" << actorName << std::endl;
+//	std::cout << "\t actorName =" << actorName << std::endl;
 
 	short numMovies;
 	memcpy(&numMovies, (char*)actorRecord+buffer, sizeof(short) );

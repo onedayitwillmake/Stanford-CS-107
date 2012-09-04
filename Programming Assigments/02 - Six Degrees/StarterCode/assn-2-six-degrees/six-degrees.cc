@@ -126,10 +126,10 @@ int main(int argc, const char *argv[]) {
 	}
 
 	while (true) {
-		string source = "Carol Eby";//promptForActor("Actor or actress", db);
+		string source = "Carol Eby"; //promptForActor("Actor or actress", db);
 		if (source == "")
 			break;
-		string target = "Debra Muubu"; //promptForActor("Another actor or actress", db);
+		string target = "Dianna Agron"; //promptForActor("Another actor or actress", db);
 		if (target == "")
 			break;
 		if (source == target) {
