@@ -9,6 +9,12 @@ using namespace std;
 const char *const imdb::kActorFileName = "actordata";
 const char *const imdb::kMovieFileName = "moviedata";
 
+
+struct Key {
+	const char* keyString;
+	const void* data;
+};
+
 imdb::imdb(const string& directory)
 {
   const string actorFileName = directory + "/" + kActorFileName;
@@ -25,6 +31,20 @@ bool imdb::good() const
 }
 
 
+int compareActors( const void* a, const void* b ) {
+	Key* needle = (Key*)a;
+	int recordOffset;
+	memcpy(&recordOffset, b, sizeof(int) );
+
+	void* actorRecord = (char*)needle->data+recordOffset;
+	char* actorName = (char*)actorRecord;
+//	std::cout << actorName << std::endl;
+
+	int value = strcmp( needle->keyString, actorName );
+	return value;
+}
+
+
 // you should be implementing these two methods right here... 
 bool imdb::getCredits(const string& player, vector<film>& films) const {
 
@@ -32,60 +52,61 @@ bool imdb::getCredits(const string& player, vector<film>& films) const {
 	int numRecords;
 	memcpy(&numRecords, actorFile, sizeof(int) );
 
-	for(int i = 0; i < numRecords; ++i ) {
-		int recordOffset;
-		memcpy(&recordOffset, ((char*)actorFile+sizeof(int)) + (i*sizeof(int)), sizeof(int) );
+	Key needle;
+	needle.keyString = player.c_str();
+	needle.data = actorFile;
 
-		void* actorRecord = (char*)actorFile+recordOffset;
-		char* actorName = (char*)actorRecord;
-
-
-		// Figure out where the num of movies info is stored by looking for it after the actors name
-		int buffer = strlen( actorName )+1;
-		// If the actors name is not an even number of characters, padd 1 extra byte
-		buffer += buffer % 2;
-
-		if( strcmp(actorName, player.c_str() ) == 0 ) {
-			short numMovies;
-			memcpy(&numMovies, (char*)actorRecord+buffer, sizeof(short) );
-
-			int movieBuffer = (buffer + sizeof(short));
-			movieBuffer += movieBuffer % 4;
-
-			int j = 0;
-			for(j = 0; j < numMovies; ++j ) {
-				int movieRecordOffset;
-				memcpy(&movieRecordOffset, (char*)actorRecord+movieBuffer + sizeof(int)*j, sizeof(int) );
-
-				char* movieName = (char*)movieFile+movieRecordOffset;
-				int movieYear = 1900 + *((char*)movieFile+movieRecordOffset + strlen(movieName) + 1);
-
-				// Pad 1 more byte for the char, if it's not even add another extra byte
-				int actorPadding = movieRecordOffset + ( strlen(movieName) + 1) + sizeof(char);
-				actorPadding += actorPadding%2;
-
-				short numActors = 0;
-				memcpy(&numActors, (char*)movieFile+actorPadding, sizeof(short) );
-
-				int dataPadding = actorPadding + sizeof(short);
-				dataPadding += dataPadding % 4;
-
-				film aFilm;
-				aFilm.title = std::string(movieName);
-				aFilm.year = movieYear;
-				aFilm.offset = movieRecordOffset;
-				aFilm.actorOffset = dataPadding;
-				aFilm.numActors = numActors;
-
-				films.push_back(aFilm);
-			}
-
-			return true;
-		}
-
+	int* ptr = (int*)bsearch( &needle, (char*)actorFile+sizeof(int), numRecords, sizeof(int), compareActors );
+	if( ptr == NULL ) {
+		return false;
 	}
 
-	return false;
+	int location = *ptr;
+	void* actorRecord = (char*)actorFile+location;
+	char* actorName = (char*)actorRecord;
+
+	// Figure out where the num of movies info is stored by looking for it after the actors name
+	int buffer = strlen( actorName )+1;
+	// If the actors name is not an even number of characters, padd 1 extra byte
+	buffer += buffer % 2;
+
+//	std::cout << "ActorName =" << actorName << std::endl;
+
+	short numMovies;
+	memcpy(&numMovies, (char*)actorRecord+buffer, sizeof(short) );
+
+	int movieBuffer = (buffer + sizeof(short));
+	movieBuffer += movieBuffer % 4;
+
+	int j = 0;
+	for(j = 0; j < numMovies; ++j ) {
+		int movieRecordOffset;
+		memcpy(&movieRecordOffset, (char*)actorRecord+movieBuffer + sizeof(int)*j, sizeof(int) );
+
+		char* movieName = (char*)movieFile+movieRecordOffset;
+		int movieYear = 1900 + *((char*)movieFile+movieRecordOffset + strlen(movieName) + 1);
+
+		// Pad 1 more byte for the char, if it's not even add another extra byte
+		int actorPadding = movieRecordOffset + ( strlen(movieName) + 1) + sizeof(char);
+		actorPadding += actorPadding%2;
+
+		short numActors = 0;
+		memcpy(&numActors, (char*)movieFile+actorPadding, sizeof(short) );
+
+		int dataPadding = actorPadding + sizeof(short);
+		dataPadding += dataPadding % 4;
+
+		film aFilm;
+		aFilm.title = std::string(movieName);
+		aFilm.year = movieYear;
+		aFilm.offset = movieRecordOffset;
+		aFilm.actorOffset = dataPadding;
+		aFilm.numActors = numActors;
+
+		films.push_back(aFilm);
+	}
+
+	return true;
 }
 bool imdb::getCast(const film& movie, vector<string>& players) const { 
 

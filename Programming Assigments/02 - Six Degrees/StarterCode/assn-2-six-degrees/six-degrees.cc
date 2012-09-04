@@ -6,6 +6,8 @@
 #include <iomanip>
 #include "imdb.h"
 #include "path.h"
+#include <time.h>
+
 using namespace std;
 
 /**
@@ -56,20 +58,20 @@ void generateShortestPath( const std::string& source, const std::string& target,
 		path aPath = partialPaths.front();
 		partialPaths.pop_front();
 
-		std::cout << aPath << std::endl;
+//		std::cout << aPath << std::endl;
 
 		// Get all of the last actors films
 		std::vector<film> films;
 		db.getCredits( aPath.getLastPlayer(), films );
 
-		std::cout << "Checking actor " << aPath.getLastPlayer() << "'s films (total=" << films.size() << ")" << std::endl;
+//		std::cout << "Checking actor " << aPath.getLastPlayer() << "'s films (total=" << films.size() << ")" << std::endl;
 
 		// Iterate through all this actors movies, but first make sure we've not seen this movie already
 		std::set< film >::iterator setItr;
 		for( std::vector<film>::iterator movieItr = films.begin(); movieItr != films.end(); ++movieItr ) {
 			std::pair< std::set<film>::iterator, bool > found = previouslySeenFilms.insert( *movieItr );
 			if( !found.second ) {
-				std::cout << "Already checked film '" << (*movieItr).title << "' skipping..." << std::endl;
+//				std::cout << "Already checked film '" << (*movieItr).title << "' skipping..." << std::endl;
 				continue; /* movie was already in set */
 			}
 
@@ -80,7 +82,7 @@ void generateShortestPath( const std::string& source, const std::string& target,
 			for( std::vector<std::string>::iterator playerItr = players.begin(); playerItr != players.end(); ++playerItr ) {
 				std::pair< std::set<std::string>::iterator, bool > playerPair = previouslySeenActors.insert( *playerItr );
 				if( !playerPair.second ) {
-					std::cout << "Already checked actor '" << *playerItr << "' skipping..." << std::endl;
+//					std::cout << "Already checked actor '" << *playerItr << "' skipping..." << std::endl;
 					continue;
 				}
 
@@ -113,7 +115,6 @@ void generateShortestPath( const std::string& source, const std::string& target,
  *             as well.
  * @return 0 if the program ends normally, and undefined otherwise.
  */
-
 int main(int argc, const char *argv[]) {
 	imdb db(determinePathToData("./")); // inlined in imdb-utils.h
 	if (!db.good()) {
@@ -136,7 +137,12 @@ int main(int argc, const char *argv[]) {
 					<< "Good one.  This is only interesting if you specify two different people."
 					<< endl;
 		} else {
-			generateShortestPath( source, target, db );
+
+			clock_t start, end;
+			start = clock();
+				generateShortestPath( source, target, db );
+			end = clock();
+			std::cout << "Process took: '" << (double)(end-start)/CLOCKS_PER_SEC << "' seconds" << std::endl;
 			break;
 			// replace the following line by a call to your generateShortestPath routine...
 //			cout << endl << "No path between those two people could be found." << endl << endl;
