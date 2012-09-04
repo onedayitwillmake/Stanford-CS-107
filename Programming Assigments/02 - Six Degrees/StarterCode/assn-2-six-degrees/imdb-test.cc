@@ -181,7 +181,7 @@ static void listAllMoviesAndCostars(const string& player,
 
 static void queryForActors(const imdb& db)
 {
-	string response = "Cher (I)";
+	string response = "Kathy Bates (I)";
 	listAllMoviesAndCostars(response, db);
 	return;
 	while (true) {
